@@ -17,7 +17,10 @@ function update_top(text_widget)
   proc_name = proc_substr:gsub("%d", "")
   proc_name = proc_name:gsub("%s", "")
   proc_name = proc_name:gsub("%.", "")
-  proc_str = "Proc: " .. proc_name .. " CPU: " .. cpu .. " Mem: " .. mem
+  num_spaces = 14 - proc_name:len()
+  padding = string.rep(" ", num_spaces)
+  proc_str = " Proc: " .. proc_name .. padding .. " CPU: " .. cpu .. "  Mem: " .. mem
+
 
   text_widget:set_markup(proc_str)
 end
