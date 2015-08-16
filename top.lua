@@ -9,13 +9,20 @@ function update_top(text_widget)
   fd:close()
 
   -- Get %CPU, %MEM, TIME+, and process name
-  local proc_str = string.match(proc_status,
-    "(%d?%d%.%d.*%w+)");
+  local proc_substr = string.match(proc_status,
+    "(%d?%d%.%d.*%w+)")
+
+  cpu = string.match(proc_substr, "(%d?%d%.%d)")
+  mem = string.match(proc_substr, "%d?%d%.%d.*(%d+%.%d)")
+  proc_name = proc_substr:gsub("%d", "")
+  proc_name = proc_name:gsub("%s", "")
+  proc_name = proc_name:gsub("%.", "")
+  proc_str = "Proc: " .. proc_name .. " CPU: " .. cpu .. " Mem: " .. mem
 
   text_widget:set_markup(proc_str)
 end
 
 update_top(top_widget)
-mytimer = timer({ timeout = 1 })
+local mytimer = timer({ timeout = 1 })
 mytimer:connect_signal("timeout", function () update_top(top_widget) end)
 mytimer:start()
