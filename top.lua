@@ -2,6 +2,7 @@ local wibox = require("wibox")
 local awful = require("awful")
 
 top_widget = wibox.widget.textbox()
+top_widget:set_font("monospace 8")
 
 function update_top(text_widget)
   local fd = io.popen("top -bn1 | sed '8q;d'")
