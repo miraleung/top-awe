@@ -15,12 +15,11 @@ function update_top(text_widget)
   local total_cpu_status = fd:read('*all')
   fd:close()
 
-  -- Get %CPU, %MEM, TIME+, and process name
-  local proc_substr = string.match(proc_status,
-    "(%d?%d%.%d.*%w+)")
+  -- Get CPU%, Mem%, Total CPU%, and process name.
+  local proc_substr = proc_status:match("(%d?%d%.%d.*%w+)")
 
-  cpu = string.match(proc_substr, "(%d?%d%.%d)")
-  mem = string.match(proc_substr, "%d?%d%.%d.*(%d+%.%d)")
+  cpu = proc_substr:match("(%d?%d%.%d)")
+  mem = proc_substr:match("%d?%d%.%d.*(%d+%.%d)")
   total_cpu = total_cpu_status:match("%d+%.?%d*")
   if not total_cpu:match("%.") then
     total_cpu = total_cpu .. ".0"
