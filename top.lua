@@ -21,6 +21,11 @@ function update_top(text_widget)
 
   cpu = string.match(proc_substr, "(%d?%d%.%d)")
   mem = string.match(proc_substr, "%d?%d%.%d.*(%d+%.%d)")
+  total_cpu = total_cpu_status:match("%d+%.?%d*")
+  if not total_cpu:match("%.") then
+    total_cpu = total_cpu .. ".0"
+  end
+
   proc_name = proc_substr:gsub("%d", "")
   proc_name = proc_name:gsub("%s", "")
   proc_name = proc_name:gsub("%.", "")
@@ -37,7 +42,7 @@ function update_top(text_widget)
   proc_str = " Proc: " .. proc_name .. proc_padding
     .. " CPU: " .. cpu_padding .. cpu .. "%"
     .. " Mem: " .. mem_padding .. mem .. "%"
-    .. " | Total CPU: " .. total_cpu_padding .. total_cpu_status
+    .. " | Total CPU: " .. total_cpu_padding .. total_cpu .. "%"
 
   text_widget:set_markup(proc_str)
 end
