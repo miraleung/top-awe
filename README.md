@@ -10,10 +10,12 @@ A [top](http://linux.die.net/man/1/top) process monitor widget for [awesomewm](h
 3. `cd ..`
 4. In `rc.lua`:
   1. Add to the top:
+
     ```
     local top require("lib.top-awe.top")
     ```
   2. After the line `if s == 1 then right_layout:add(wibox.widget.systray()) end`, add
+
     ```
     right_layout:add(top_widget)
     ```
