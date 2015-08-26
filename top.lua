@@ -15,6 +15,11 @@ function update_top(text_widget)
   local total_cpu_status = fd:read('*all')
   fd:close()
 
+  local total_mem_cmd = "free -m | awk 'NR==2{var=$3*100/$2; print var}'"
+  fd = io.popen(total_mem_cmd)
+  local total_mem_status = fd:read('*all')
+  fd:close()
+
   -- Get CPU%, Mem%, Total CPU%, and process name.
   local proc_substr = proc_status:match("(%d?%d%.%d.*%w+)")
 
@@ -24,6 +29,7 @@ function update_top(text_widget)
   if not total_cpu:match("%.") then
     total_cpu = total_cpu .. ".0"
   end
+  total_mem = string.format(tonumber(total_mem_status), "%.2f")
 
   proc_name = proc_substr:gsub("%d", "")
   proc_name = proc_name:gsub("%s", "")
@@ -34,14 +40,18 @@ function update_top(text_widget)
   num_cpu_spaces = 4 - cpu:len()
   num_mem_spaces = 4 - mem:len()
   num_total_cpu_spaces = 6 - total_cpu_status:len()
+  num_total_mem_spaces = 6 - total_mem_status:len()
   proc_padding = string.rep(" ", num_proc_spaces)
   cpu_padding = string.rep(" ", num_cpu_spaces)
   mem_padding = string.rep(" ", num_mem_spaces)
   total_cpu_padding = string.rep(" ", num_total_cpu_spaces)
+  total_mem_padding = string.rep(" ", num_total_mem_spaces)
+
   proc_str = " Proc: " .. proc_name .. proc_padding
     .. " CPU: " .. cpu_padding .. cpu .. "%"
     .. " Mem: " .. mem_padding .. mem .. "%"
     .. " | Total CPU: " .. total_cpu_padding .. total_cpu .. "%"
+    .. " Mem: " .. total_mem_padding .. total_mem_status .. "%"
 
   text_widget:set_markup(proc_str)
 end
