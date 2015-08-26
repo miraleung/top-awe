@@ -26,10 +26,8 @@ function update_top(text_widget)
   cpu = proc_substr:match("(%d?%d%.%d)")
   mem = proc_substr:match("%d?%d%.%d.*(%d+%.%d)")
   total_cpu = total_cpu_status:match("%d+%.?%d*")
-  if not total_cpu:match("%.") then
-    total_cpu = total_cpu .. ".0"
-  end
-  total_mem = string.format(tonumber(total_mem_status), "%.2f")
+  total_cpu = string.format("%.1f", tonumber(total_cpu))
+  total_mem = string.format("%.1f", tonumber(total_mem_status))
 
   proc_name = proc_substr:gsub("%d", "")
   proc_name = proc_name:gsub("%s", "")
@@ -39,8 +37,8 @@ function update_top(text_widget)
   num_proc_spaces = 12 - proc_name:len()
   num_cpu_spaces = 4 - cpu:len()
   num_mem_spaces = 4 - mem:len()
-  num_total_cpu_spaces = 6 - total_cpu_status:len()
-  num_total_mem_spaces = 6 - total_mem_status:len()
+  num_total_cpu_spaces = 5 - total_cpu_status:len()
+  num_total_mem_spaces = 5 - total_mem_status:len()
   proc_padding = string.rep(" ", num_proc_spaces)
   cpu_padding = string.rep(" ", num_cpu_spaces)
   mem_padding = string.rep(" ", num_mem_spaces)
@@ -51,7 +49,7 @@ function update_top(text_widget)
     .. " CPU: " .. cpu_padding .. cpu .. "%"
     .. " Mem: " .. mem_padding .. mem .. "%"
     .. " | Total CPU: " .. total_cpu_padding .. total_cpu .. "%"
-    .. " Mem: " .. total_mem_padding .. total_mem_status .. "%"
+    .. " Mem: " .. total_mem_padding .. total_mem .. "%"
 
   text_widget:set_markup(proc_str)
 end
