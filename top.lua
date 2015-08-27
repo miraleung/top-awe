@@ -4,20 +4,28 @@ local awful = require("awful")
 top_widget = wibox.widget.textbox()
 top_widget:set_font("monospace 8")
 
+-- Returns a string with "%" prepended to the end.
+function get_total_cpu()
+  local mpstat_cmd = "mpstat | awk '$3 ~ /CPU/ { for(i=1;i<=NF;i++) { "
+  .. "if ($i ~ /%idle/) field=i } } $3 ~ /all/ { print 100 - $field }'"
+  local fd = io.popen(mpstat_cmd)
+  local total_cpu_status = fd:read("*all")
+  fd:close()
+  local total_cpu = total_cpu_status:match("%d+%.?%d*")
+  return string.format("%.1f", tonumber(total_cpu))
+end
+
+function get_total_mem()
+  local total_mem_cmd = "free -m | awk 'NR==2{var=$3*100/$2; print var}'"
+  local fd = io.popen(total_mem_cmd)
+  local total_mem_status = fd:read('*all')
+  fd:close()
+  return string.format("%.1f", tonumber(total_mem_status))
+end
+
 function update_top(text_widget)
   local fd = io.popen("top -bn1 | sed '8q;d'")
   local proc_status = fd:read("*all")
-  fd:close()
-
-  local mpstat_cmd = "mpstat | awk '$3 ~ /CPU/ { for(i=1;i<=NF;i++) { "
-    .. "if ($i ~ /%idle/) field=i } } $3 ~ /all/ { print 100 - $field }'"
-  fd = io.popen(mpstat_cmd)
-  local total_cpu_status = fd:read('*all')
-  fd:close()
-
-  local total_mem_cmd = "free -m | awk 'NR==2{var=$3*100/$2; print var}'"
-  fd = io.popen(total_mem_cmd)
-  local total_mem_status = fd:read('*all')
   fd:close()
 
   -- Get CPU%, Mem%, Total CPU%, and process name.
@@ -25,10 +33,8 @@ function update_top(text_widget)
 
   cpu = proc_substr:match("(%d?%d%.%d)")
   mem = proc_substr:match("%d?%d%.%d.*(%d+%.%d)")
-  total_cpu = total_cpu_status:match("%d+%.?%d*")
-  total_cpu = string.format("%.1f", tonumber(total_cpu))
-  total_mem = string.format("%.1f", tonumber(total_mem_status))
-
+  local total_cpu = get_total_cpu()
+  local total_mem = get_total_mem()
   proc_name = proc_substr:gsub("%d", "")
   proc_name = proc_name:gsub("%s", "")
   proc_name = proc_name:gsub("%.", "")
@@ -37,8 +43,8 @@ function update_top(text_widget)
   num_proc_spaces = 12 - proc_name:len()
   num_cpu_spaces = 4 - cpu:len()
   num_mem_spaces = 4 - mem:len()
-  num_total_cpu_spaces = 5 - total_cpu_status:len()
-  num_total_mem_spaces = 5 - total_mem_status:len()
+  num_total_cpu_spaces = 5 - total_cpu:len()
+  num_total_mem_spaces = 5 - total_mem:len()
   proc_padding = string.rep(" ", num_proc_spaces)
   cpu_padding = string.rep(" ", num_cpu_spaces)
   mem_padding = string.rep(" ", num_mem_spaces)
