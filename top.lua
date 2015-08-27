@@ -4,7 +4,7 @@ local awful = require("awful")
 top_widget = wibox.widget.textbox()
 top_widget:set_font("monospace 8")
 
--- Returns a string with "%" prepended to the end.
+-- Returns the total CPU usage (percent) as a string.
 function get_total_cpu()
   local mpstat_cmd = "mpstat | awk '$3 ~ /CPU/ { for(i=1;i<=NF;i++) { "
   .. "if ($i ~ /%idle/) field=i } } $3 ~ /all/ { print 100 - $field }'"
@@ -15,6 +15,7 @@ function get_total_cpu()
   return string.format("%.1f", tonumber(total_cpu))
 end
 
+-- Returns the total memory usage (percent) as a string.
 function get_total_mem()
   local total_mem_cmd = "free -m | awk 'NR==2{var=$3*100/$2; print var}'"
   local fd = io.popen(total_mem_cmd)
@@ -40,16 +41,12 @@ function update_top(text_widget)
   proc_name = proc_name:gsub("%.", "")
   proc_name = proc_name:gsub(":", "")
   proc_name = proc_name:sub(0, 12)
-  num_proc_spaces = 12 - proc_name:len()
-  num_cpu_spaces = 4 - cpu:len()
-  num_mem_spaces = 4 - mem:len()
-  num_total_cpu_spaces = 5 - total_cpu:len()
-  num_total_mem_spaces = 5 - total_mem:len()
-  proc_padding = string.rep(" ", num_proc_spaces)
-  cpu_padding = string.rep(" ", num_cpu_spaces)
-  mem_padding = string.rep(" ", num_mem_spaces)
-  total_cpu_padding = string.rep(" ", num_total_cpu_spaces)
-  total_mem_padding = string.rep(" ", num_total_mem_spaces)
+
+  proc_padding = string.rep(" ", 12 - proc_name:len())
+  cpu_padding = string.rep(" ", 4 - cpu:len())
+  mem_padding = string.rep(" ", 4 - mem:len())
+  total_cpu_padding = string.rep(" ", 5 - total_cpu:len())
+  total_mem_padding = string.rep(" ", 5 - total_mem:len())
 
   proc_str = " Proc: " .. proc_name .. proc_padding
     .. " CPU: " .. cpu_padding .. cpu .. "%"
