@@ -1,7 +1,7 @@
 # top-awe
 A [top](http://linux.die.net/man/1/top) process monitor widget for [awesomewm](http://awesome.naquadah.org/) 3.5.
 
-![top-awe](https://cloud.githubusercontent.com/assets/5384433/9402154/69b79e4c-478e-11e5-99a7-b5da2e30841b.png)
+![top-awe](https://cloud.githubusercontent.com/assets/5384433/9540062/00bb52ea-4d0f-11e5-8d25-5003b4b151e6.png)
 
 ## Installation
 0. **Dependencies:** `sudo apt-get install top mpstat`
