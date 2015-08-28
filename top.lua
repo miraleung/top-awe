@@ -25,10 +25,9 @@ function get_total_mem()
 end
 
 function get_proc_name(raw_proc_substr)
-  proc_name = raw_proc_substr:gsub("%d", "")
+  index = raw_proc_substr:find("%s[^%s]*$")
+  proc_name = raw_proc_substr:sub(index)
   proc_name = proc_name:gsub("%s", "")
-  proc_name = proc_name:gsub("%.", "")
-  proc_name = proc_name:gsub(":", "")
   return proc_name:sub(0, 12)
 end
 
