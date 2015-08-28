@@ -14,7 +14,7 @@ A [top](http://linux.die.net/man/1/top) process monitor widget for [awesomewm](h
     ```
     local top require("lib.top-awe.top")
     ```
-  2. After the line `if s == 1 then right_layout:add(wibox.widget.systray()) end`, add
+  2. After the line `if s == 1 then right_layout:add(wibox.widget.systray()) end`, add:
 
     ```
     right_layout:add(top_widget)
