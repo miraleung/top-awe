@@ -24,29 +24,38 @@ function get_total_mem()
   return string.format("%.1f", tonumber(total_mem_status))
 end
 
+function get_proc_name(raw_proc_substr)
+  proc_name = raw_proc_substr:gsub("%d", "")
+  proc_name = proc_name:gsub("%s", "")
+  proc_name = proc_name:gsub("%.", "")
+  proc_name = proc_name:gsub(":", "")
+  return proc_name:sub(0, 12)
+end
+
+-- Returns {@code max_len} spaces minus length of {@code str}.
+function get_padding(max_len, str)
+  return string.rep(" ", max_len - str:len())
+end
+
 function update_top(text_widget)
   local fd = io.popen("top -bn1 | sed '8q;d'")
   local proc_status = fd:read("*all")
   fd:close()
 
   -- Get CPU%, Mem%, Total CPU%, and process name.
-  local proc_substr = proc_status:match("(%d?%d%.%d.*%w+)")
+  proc_substr = proc_status:match("(%d?%d%.%d.*%w+)")
 
-  cpu = proc_substr:match("(%d?%d%.%d)")
-  mem = proc_substr:match("%d?%d%.%d.*(%d+%.%d)")
+  local cpu = proc_substr:match("(%d?%d%.%d)")
+  local mem = proc_substr:match("%d?%d%.%d.*(%d+%.%d)")
   local total_cpu = get_total_cpu()
   local total_mem = get_total_mem()
-  proc_name = proc_substr:gsub("%d", "")
-  proc_name = proc_name:gsub("%s", "")
-  proc_name = proc_name:gsub("%.", "")
-  proc_name = proc_name:gsub(":", "")
-  proc_name = proc_name:sub(0, 12)
+  local proc_name = get_proc_name(proc_substr)
 
-  proc_padding = string.rep(" ", 12 - proc_name:len())
-  cpu_padding = string.rep(" ", 4 - cpu:len())
-  mem_padding = string.rep(" ", 4 - mem:len())
-  total_cpu_padding = string.rep(" ", 5 - total_cpu:len())
-  total_mem_padding = string.rep(" ", 5 - total_mem:len())
+  proc_padding = get_padding(12, proc_name)
+  cpu_padding = get_padding(4, cpu)
+  mem_padding = get_padding(4, mem)
+  total_cpu_padding = get_padding(5, total_cpu)
+  total_mem_padding = get_padding(5, total_mem)
 
   proc_str = " Proc: " .. proc_name .. proc_padding
     .. " CPU: " .. cpu_padding .. cpu .. "%"
